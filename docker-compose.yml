@@ -48,19 +48,19 @@ services:
     security_opt:
       - no-new-privileges:true
 
-  # Supabase MCP Server
-  supabase:
+  # PostgreSQL MCP Server
+  postgres:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.supabase
-    container_name: mcp-supabase
+      dockerfile: dockerfiles/Dockerfile.postgres
+    container_name: mcp-postgres
     stdin_open: true
     tty: true
     networks:
       - mcp-network
     restart: unless-stopped
     environment:
-      - SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}
+      - DATABASE_URL_STRING=${DATABASE_URL_STRING}
 
   # MCP Gateway Server (Optional - for unified access)
   # Use: docker-compose --profile gateway up -d

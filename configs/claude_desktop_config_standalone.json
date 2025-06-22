@@ -33,15 +33,15 @@
         "mcp-zen:latest"
       ]
     },
-    "supabase": {
+    "postgres": {
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "--name", "mcp-supabase-temp",
-        "-e", "SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}",
-        "mcp-supabase:latest"
+        "--name", "mcp-postgres-temp",
+        "-e", "DATABASE_URL_STRING=${DATABASE_URL_STRING}",
+        "mcp-postgres:latest"
       ]
     }
   }

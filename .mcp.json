@@ -32,17 +32,16 @@
           "server.py"
         ]
       },
-      "supabase": {
+      "postgres": {
         "command": "docker",
         "args": [
           "exec",
           "-i",
-          "mcp-supabase",
-          "npx",
-          "-y",
-          "@supabase/mcp-server-supabase@latest",
-          "--access-token",
-          "${SUPABASE_ACCESS_TOKEN}"
+          "mcp-postgres",
+          "postgres-mcp",
+          "--access-mode=unrestricted",
+          "--transport=stdio",
+          "postgresql://postgres:postgres@host.docker.internal:5432/iris_rag"
         ]
       }
     }

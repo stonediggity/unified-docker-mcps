@@ -6,7 +6,7 @@ This document provides development setup instructions and common commands for wo
 
 - Docker and Docker Compose installed
 - Basic familiarity with MCP (Model Context Protocol)
-- API keys for required services (OpenRouter, Supabase)
+- API keys for required services (OpenRouter, PostgreSQL database)
 
 ## Development Setup
 
@@ -54,7 +54,7 @@ docker-compose down
 docker-compose stop context7
 
 # Restart service
-docker-compose restart puppeteer
+docker-compose restart postgres
 ```
 
 ### Monitoring and Debugging
@@ -104,7 +104,7 @@ docker-compose down -v --rmi all
 - `dockerfiles/Dockerfile.context7` - Context7 MCP server
 - `dockerfiles/Dockerfile.puppeteer` - Puppeteer automation
 - `dockerfiles/Dockerfile.zen` - Zen AI reasoning tools
-- `dockerfiles/Dockerfile.supabase` - Supabase database operations
+- `dockerfiles/Dockerfile.postgres` - PostgreSQL MCP server with database analysis
 - `dockerfiles/Dockerfile.gateway` - MCP Gateway (optional)
 
 ## Adding New Services
@@ -152,6 +152,24 @@ docker inspect mcp-[service-name]
 docker network inspect 2-unified-mcps_mcp-network
 ```
 
+### PostgreSQL MCP Debugging
+```bash
+# Check PostgreSQL MCP server status
+docker-compose logs postgres
+
+# Test database connectivity
+docker exec -it mcp-postgres node -e "console.log('PostgreSQL MCP server running')"
+
+# Verify environment variables
+docker exec -it mcp-postgres env | grep DATABASE_URL_STRING
+
+# Common PostgreSQL issues:
+# - Invalid DATABASE_URL_STRING format
+# - Network connectivity to database
+# - Database authentication failures
+# - Missing database permissions
+```
+
 ### Build Issues
 ```bash
 # Clean build cache
@@ -193,7 +211,7 @@ chmod +x scripts/setup.sh
 
 Required in `.env` file:
 - `OPENROUTER_API_KEY` - For Zen MCP server
-- `SUPABASE_ACCESS_TOKEN` - For Supabase MCP server
+- `DATABASE_URL_STRING` - For PostgreSQL MCP server (format: postgresql://username:password@host:port/database)
 
 ## Testing
 
@@ -203,7 +221,23 @@ Required in `.env` file:
 docker-compose ps
 
 # Test specific service logs
-docker-compose logs --tail=10 zen
+docker-compose logs --tail=10 postgres
+```
+
+### PostgreSQL MCP Testing
+```bash
+# Test PostgreSQL MCP server connectivity
+docker-compose logs postgres
+
+# Verify database connection
+docker exec -it mcp-postgres /bin/bash
+# Inside container: test basic MCP functionality
+
+# Test database schema analysis capabilities
+# Use Claude Desktop to run commands like:
+# "Show me the database schemas"
+# "Analyze the database health"
+# "List all tables in public schema"
 ```
 
 ### Integration Testing
@@ -211,6 +245,12 @@ docker-compose logs --tail=10 zen
 # Test Claude Desktop connection
 # Use configs/claude_desktop_config.json
 # Restart Claude Desktop and test MCP commands
+
+# PostgreSQL MCP specific tests:
+# - Database schema exploration
+# - Query performance analysis  
+# - Database health monitoring
+# - SQL query execution
 ```
 
 ## Deployment

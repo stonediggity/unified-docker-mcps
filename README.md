@@ -4,7 +4,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 
 ## Features
 
-- 🐳 **Containerized MCP Servers**: Context7, Puppeteer, Zen, and Supabase MCP servers
+- 🐳 **Containerized MCP Servers**: Context7, Puppeteer, Zen, and PostgreSQL MCP servers
 - 🔒 **Security First**: Containers run as non-root users with security hardening
 - 🚀 **Easy Setup**: One-command deployment with Docker Compose
 - 🔧 **Flexible Configuration**: Support for both composed and standalone deployment
@@ -18,7 +18,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 │   ├── Dockerfile.context7
 │   ├── Dockerfile.puppeteer
 │   ├── Dockerfile.zen
-│   ├── Dockerfile.supabase
+│   ├── Dockerfile.postgres
 │   ├── Dockerfile.base-node
 │   └── Dockerfile.gateway
 ├── configs/                     # Claude Desktop configurations
@@ -60,8 +60,15 @@ Web scraping and browser automation capabilities for data extraction and testing
 ### Zen MCP Server
 Advanced AI reasoning and analysis tools with support for multiple AI models.
 
-### Supabase MCP Server
-Database operations and backend services integration.
+### PostgreSQL MCP Server
+Comprehensive PostgreSQL database management and analysis platform offering:
+
+- **Schema Analysis**: Explore database schemas, tables, views, and relationships
+- **Query Optimization**: Analyze query execution plans and performance bottlenecks  
+- **Database Health Monitoring**: Check for bloated indexes, vacuum health, and connection utilization
+- **Performance Insights**: Get recommendations for indexes and query improvements
+- **Workload Analysis**: Identify slow queries and resource-intensive operations
+- **Advanced SQL Execution**: Run complex queries with detailed result analysis
 
 ## Usage Instructions
 
@@ -120,7 +127,7 @@ Alternative configuration in `configs/claude_desktop_config_standalone.json` run
 Required environment variables in `.env`:
 
 - `OPENROUTER_API_KEY`: API key for Zen MCP server ([Get from OpenRouter](https://openrouter.ai/))
-- `SUPABASE_ACCESS_TOKEN`: Access token for Supabase MCP server ([Get from Supabase](https://supabase.com/dashboard/account/tokens))
+- `DATABASE_URL_STRING`: PostgreSQL connection string for PostgreSQL MCP server (format: postgresql://username:password@host:port/database)
 
 ## Troubleshooting
 
@@ -153,7 +160,16 @@ docker run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined mcp-puppeteer:l
 
 **Zen**: Ensure OPENROUTER_API_KEY is properly set in your .env file.
 
-**Supabase**: Verify SUPABASE_ACCESS_TOKEN is correctly configured.
+**PostgreSQL**: Verify DATABASE_URL_STRING is correctly configured with a valid PostgreSQL connection string. Test database connectivity with:
+```bash
+docker-compose logs postgres
+```
+
+Common PostgreSQL MCP server capabilities:
+- Database schema exploration and table analysis
+- Query performance analysis and optimization recommendations  
+- Database health checks and maintenance insights
+- Advanced SQL query execution with detailed results
 
 ## Adding New MCP Servers
 
