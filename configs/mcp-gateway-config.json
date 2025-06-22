@@ -14,9 +14,9 @@
         "container": "mcp-zen",
         "command": ["./run-server.sh"]
       },
-      "supabase": {
-        "container": "mcp-supabase",
-        "command": ["npx", "-y", "@supabase/mcp-server-supabase@latest", "--access-token", "${SUPABASE_ACCESS_TOKEN}"]
+      "postgres": {
+        "container": "mcp-postgres",
+        "command": ["/app/entrypoint.sh"]
       }
     }
   }

@@ -1,0 +1,17 @@
+FROM crystaldba/postgres-mcp:latest
+
+# Set working directory
+WORKDIR /app
+
+# Environment variable for PostgreSQL connection
+ENV DATABASE_URL_STRING=""
+
+# Create entrypoint script
+RUN printf '#!/bin/bash\nset -e\nif [ -z "$DATABASE_URL_STRING" ]; then\n  echo "Error: DATABASE_URL_STRING environment variable is required"\n  echo "Format: postgresql://username:password@host:port/database"\n  exit 1\nfi\nexec postgres-mcp --access-mode=unrestricted --transport=sse --database-url="$DATABASE_URL_STRING"\n' > /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
+# Expose port for MCP server
+EXPOSE 8000
+
+# Run PostgreSQL MCP server
+CMD ["/app/entrypoint.sh"]
