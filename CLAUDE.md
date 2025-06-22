@@ -38,8 +38,11 @@ docker-compose ps
 
 ### Service Management
 ```bash
-# Start all services
+# Start core MCP services (recommended)
 docker-compose up -d
+
+# Start all services including optional gateway
+docker-compose --profile gateway up -d
 
 # Start specific service
 docker-compose up -d zen

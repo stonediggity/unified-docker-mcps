@@ -67,8 +67,11 @@ Database operations and backend services integration.
 
 ### Start Services
 ```bash
-# Start all services
+# Start core MCP services (recommended)
 docker-compose up -d
+
+# Start all services including gateway
+docker-compose --profile gateway up -d
 
 # Start specific service
 docker-compose up -d context7
