@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "mcp-context7-temp",
+        "mcp-context7:latest"
+      ]
+    },
+    "puppeteer": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "mcp-puppeteer-temp",
+        "--cap-add", "SYS_ADMIN",
+        "--security-opt", "seccomp=unconfined",
+        "mcp-puppeteer:latest"
+      ]
+    },
+    "zen": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "mcp-zen-temp",
+        "-e", "OPENROUTER_API_KEY=${OPENROUTER_API_KEY}",
+        "mcp-zen:latest"
+      ]
+    },
+    "supabase": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name", "mcp-supabase-temp",
+        "-e", "SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}",
+        "mcp-supabase:latest"
+      ]
+    }
+  }
+}

@@ -1,0 +1,83 @@
+
+services:
+  # Context7 MCP Server
+  context7:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.context7
+    container_name: mcp-context7
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    restart: unless-stopped
+
+  # Puppeteer MCP Server
+  puppeteer:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.puppeteer
+    container_name: mcp-puppeteer
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    # Puppeteer needs some additional capabilities
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    # Mount for downloads if needed
+    volumes:
+      - ./downloads:/home/mcpuser/downloads
+
+  # Zen MCP Server
+  zen:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.zen
+    container_name: mcp-zen
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    security_opt:
+      - no-new-privileges:true
+
+  # Supabase MCP Server
+  supabase:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.supabase
+    container_name: mcp-supabase
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}
+
+  # MCP Gateway Server (Optional - for unified access)
+  mcp-gateway:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.gateway
+    container_name: mcp-gateway
+    ports:
+      - "8811:8811"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+
+networks:
+  mcp-network:
+    driver: bridge

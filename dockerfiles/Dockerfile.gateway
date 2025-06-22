@@ -1,0 +1,12 @@
+FROM alpine:latest
+
+RUN apk add --no-cache socat docker-cli
+
+# Create a simple gateway script
+RUN echo '#!/bin/sh' > /gateway.sh && \
+    echo 'socat TCP-LISTEN:8811,fork,reuseaddr STDIO' >> /gateway.sh && \
+    chmod +x /gateway.sh
+
+EXPOSE 8811
+
+CMD ["/gateway.sh"]

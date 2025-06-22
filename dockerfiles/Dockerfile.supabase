@@ -1,0 +1,19 @@
+FROM node:20-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+
+# Environment variable for Supabase access token
+ENV SUPABASE_ACCESS_TOKEN=""
+
+# Create entrypoint script
+RUN printf '#!/bin/bash\nset -e\nif [ -z "$SUPABASE_ACCESS_TOKEN" ]; then\n  echo "Error: SUPABASE_ACCESS_TOKEN environment variable is required"\n  exit 1\nfi\nexec npx -y @supabase/mcp-server-supabase@latest --access-token "$SUPABASE_ACCESS_TOKEN"\n' > /root/entrypoint.sh && \
+    chmod +x /root/entrypoint.sh
+
+# Run Supabase MCP server
+CMD ["/root/entrypoint.sh"]

@@ -1,0 +1,49 @@
+{
+    "mcpServers": {
+      "context7": {
+        "command": "docker",
+        "args": [
+          "exec",
+          "-i",
+          "mcp-context7",
+          "npx",
+          "-y",
+          "@upstash/context7-mcp"
+        ]
+      },
+      "puppeteer": {
+        "command": "docker",
+        "args": [
+          "exec",
+          "-i",
+          "mcp-puppeteer",
+          "npx",
+          "-y",
+          "puppeteer-mcp-server"
+        ]
+      },
+      "zen": {
+        "command": "docker",
+        "args": [
+          "exec",
+          "-i",
+          "mcp-zen",
+          ".zen_venv/bin/python",
+          "server.py"
+        ]
+      },
+      "supabase": {
+        "command": "docker",
+        "args": [
+          "exec",
+          "-i",
+          "mcp-supabase",
+          "npx",
+          "-y",
+          "@supabase/mcp-server-supabase@latest",
+          "--access-token",
+          "${SUPABASE_ACCESS_TOKEN}"
+        ]
+      }
+    }
+  }

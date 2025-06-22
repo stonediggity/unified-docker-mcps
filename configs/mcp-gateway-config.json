@@ -1,0 +1,23 @@
+{
+  "gateway": {
+    "port": 8811,
+    "servers": {
+      "context7": {
+        "container": "mcp-context7",
+        "command": ["npx", "-y", "@upstash/context7-mcp"]
+      },
+      "puppeteer": {
+        "container": "mcp-puppeteer",
+        "command": ["npx", "-y", "puppeteer-mcp-server"]
+      },
+      "zen": {
+        "container": "mcp-zen",
+        "command": ["./run-server.sh"]
+      },
+      "supabase": {
+        "container": "mcp-supabase",
+        "command": ["npx", "-y", "@supabase/mcp-server-supabase@latest", "--access-token", "${SUPABASE_ACCESS_TOKEN}"]
+      }
+    }
+  }
+}
