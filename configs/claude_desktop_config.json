@@ -42,6 +42,17 @@
         "--transport=stdio",
         "postgresql://postgres:postgres@host.docker.internal:5432/iris_rag"
       ]
+    },
+    "sequentialthinking": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-sequentialthinking",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
     }
   }
 }

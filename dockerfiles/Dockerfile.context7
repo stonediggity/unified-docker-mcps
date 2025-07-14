@@ -9,8 +9,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /root
 
-# Create entrypoint script
-RUN printf '#!/bin/bash\nset -e\nexec npx -y @upstash/context7-mcp\n' > /root/entrypoint.sh && \
+# Clear npm cache to prevent conflicts
+RUN npm cache clean --force && \
+    rm -rf /root/.npm
+
+# Create entrypoint script with cache cleanup
+RUN printf '#!/bin/bash\nset -e\n# Clean up any existing npx cache\nrm -rf /root/.npm/_npx\nexec npx -y @upstash/context7-mcp\n' > /root/entrypoint.sh && \
     chmod +x /root/entrypoint.sh
 
 # Run the Context7 MCP server

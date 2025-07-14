@@ -22,16 +22,6 @@
           "puppeteer-mcp-server"
         ]
       },
-      "zen": {
-        "command": "docker",
-        "args": [
-          "exec",
-          "-i",
-          "mcp-zen",
-          ".zen_venv/bin/python",
-          "server.py"
-        ]
-      },
       "postgres": {
         "command": "docker",
         "args": [
@@ -43,6 +33,18 @@
           "--transport=stdio",
           "postgresql://postgres:postgres@host.docker.internal:5432/iris_rag"
         ]
+      },
+      "sequential-thinking": {
+        "command": "docker",
+        "args": [
+          "exec",
+          "-i",
+          "mcp-sequentialthinking",
+          "npx",
+          "-y",
+          "@modelcontextprotocol/server-sequential-thinking"
+        ]
       }
     }
-  }
+    }
+  

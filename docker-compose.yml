@@ -32,22 +32,6 @@ services:
     volumes:
       - ./downloads:/home/mcpuser/downloads
 
-  # Zen MCP Server
-  zen:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.zen
-    container_name: mcp-zen
-    stdin_open: true
-    tty: true
-    networks:
-      - mcp-network
-    restart: unless-stopped
-    environment:
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-    security_opt:
-      - no-new-privileges:true
-
   # PostgreSQL MCP Server
   postgres:
     build:
@@ -61,6 +45,18 @@ services:
     restart: unless-stopped
     environment:
       - DATABASE_URL_STRING=${DATABASE_URL_STRING}
+
+  # Sequential Thinking MCP Server
+  sequentialthinking:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.sequentialthinking
+    container_name: mcp-sequentialthinking
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    restart: unless-stopped
 
   # MCP Gateway Server (Optional - for unified access)
   # Use: docker-compose --profile gateway up -d
