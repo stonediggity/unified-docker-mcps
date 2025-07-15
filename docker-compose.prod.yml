@@ -1,0 +1,197 @@
+# Production Docker Compose Override
+# This file extends docker-compose.yml with production-specific settings
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # Production service configurations
+  context7:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+    deploy:
+      resources:
+        limits:
+          cpus: '${CONTEXT7_CPU_LIMIT:-0.5}'
+          memory: ${CONTEXT7_MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  puppeteer:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+      - PUPPETEER_DEBUG=false
+    deploy:
+      resources:
+        limits:
+          cpus: '${PUPPETEER_CPU_LIMIT:-1.0}'
+          memory: ${PUPPETEER_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres:
+    environment:
+      - DATABASE_URL_STRING=${DATABASE_URL_STRING}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  sequentialthinking:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Gateway only in production if explicitly enabled
+  mcp-gateway:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - "${GATEWAY_PORT:-8811}:8811"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Monitoring services for production
+  prometheus:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    volumes:
+      - prometheus_prod_data:/prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Disable Grafana in production by default (use external)
+  grafana:
+    profiles:
+      - grafana-prod
+
+  node-exporter:
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cadvisor:
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  prometheus_prod_data:

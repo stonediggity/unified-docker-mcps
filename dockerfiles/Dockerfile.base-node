@@ -1,17 +1,52 @@
-FROM node:20-slim
+# Build stage - includes build tools and dependencies
+FROM node:20-slim AS builder
 
-# Install common dependencies
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     ca-certificates \
+    bash \
+    procps \
+    python3 \
+    make \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user
+# Create a non-root user for security
 RUN useradd -m -s /bin/bash mcpuser
 
 # Set up working directory
-WORKDIR /app
+WORKDIR /home/mcpuser
+RUN mkdir -p /home/mcpuser/.npm && \
+    chown -R mcpuser:mcpuser /home/mcpuser
+
+# Clear npm cache to prevent conflicts
+RUN npm cache clean --force
+
+# Production stage - minimal runtime image
+FROM node:20-slim AS production
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    bash \
+    procps \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create a non-root user for security
+RUN useradd -m -s /bin/bash mcpuser
+
+# Set up working directory and ensure proper ownership
+WORKDIR /home/mcpuser
+RUN mkdir -p /home/mcpuser/.npm && \
+    chown -R mcpuser:mcpuser /home/mcpuser
+
+# Copy any global npm packages from builder if needed
+COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Switch to non-root user
 USER mcpuser

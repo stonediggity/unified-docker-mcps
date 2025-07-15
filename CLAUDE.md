@@ -25,7 +25,11 @@ nano .env
 
 ### Manual Setup (Alternative)
 ```bash
-# Build all images
+# Build base image and all services
+./scripts/build-base.sh
+
+# Or build individually
+docker-compose --profile build-base build mcp-base
 docker-compose build
 
 # Start services in background
@@ -33,6 +37,19 @@ docker-compose up -d
 
 # Check status
 docker-compose ps
+```
+
+### Environment-Specific Deployment
+```bash
+# Development deployment (includes all features)
+./scripts/deploy-dev.sh
+
+# Production deployment (optimized settings)
+./scripts/deploy-prod.sh
+
+# Manual environment-specific deployment
+docker-compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up -d
+docker-compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
 ## Common Commands
@@ -45,8 +62,14 @@ docker-compose up -d
 # Start all services including optional gateway
 docker-compose --profile gateway up -d
 
+# Start with monitoring stack (Prometheus + Grafana)
+docker-compose --profile monitoring up -d
+
+# Start all profiles (core + gateway + monitoring)
+docker-compose --profile gateway --profile monitoring up -d
+
 # Start specific service
-docker-compose up -d zen
+docker-compose up -d context7
 
 # Stop all services
 docker-compose down
@@ -106,12 +129,42 @@ docker-compose down -v --rmi all
 - Configure MCP servers specific to that project
 - Example configuration provided in README.md
 
+### Environment Configuration
+Multiple environment configurations are supported:
+- `.env` - Default configuration (copy from .env.example)
+- `.env.dev` - Development settings with debug logging and all features enabled
+- `.env.prod` - Production settings with optimized resource limits and security
+
+Environment-specific docker-compose files:
+- `docker-compose.dev.yml` - Development overrides (all profiles enabled)
+- `docker-compose.prod.yml` - Production overrides (strict limits, logging)
+
 ### Individual Dockerfiles
-- `dockerfiles/Dockerfile.context7` - Context7 MCP server
-- `dockerfiles/Dockerfile.puppeteer` - Puppeteer automation
+- `dockerfiles/Dockerfile.base-node` - Shared base image for Node.js MCP servers
+- `dockerfiles/Dockerfile.context7` - Context7 MCP server (extends base-node)
+- `dockerfiles/Dockerfile.puppeteer` - Puppeteer automation (extends base-node)
 - `dockerfiles/Dockerfile.postgres` - PostgreSQL MCP server with database analysis
-- `dockerfiles/Dockerfile.sequentialthinking` - Sequential Thinking MCP server
+- `dockerfiles/Dockerfile.sequentialthinking` - Sequential Thinking MCP server (extends base-node)
 - `dockerfiles/Dockerfile.gateway` - MCP Gateway (optional)
+
+### Container Architecture
+The project uses a shared base image (`mcp-base`) for Node.js services to:
+- Reduce image duplication and build times
+- Ensure consistent security practices (non-root user)
+- Provide common dependencies and configuration
+- Simplify maintenance and updates
+
+### Monitoring Stack
+Optional monitoring infrastructure is available with the `monitoring` profile:
+- **Prometheus**: Metrics collection and storage (port 9090)
+- **Grafana**: Visualization dashboard (port 3000, admin/admin)
+- **Node Exporter**: System metrics (port 9100)
+- **cAdvisor**: Container metrics (port 8080)
+
+Access monitoring dashboards:
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin/admin)
+- cAdvisor: http://localhost:8080
 
 ## Adding New Services
 

@@ -1,17 +1,8 @@
-FROM node:20-slim
-
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    ca-certificates \
-    bash \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /root
+FROM mcp-base:latest
 
 # Create entrypoint script
-RUN printf '#!/bin/bash\nset -e\nexec npx -y @modelcontextprotocol/server-sequential-thinking\n' > /root/entrypoint.sh && \
-    chmod +x /root/entrypoint.sh
+RUN printf '#!/bin/bash\nset -e\nexec npx -y @modelcontextprotocol/server-sequential-thinking\n' > /home/mcpuser/entrypoint.sh && \
+    chmod +x /home/mcpuser/entrypoint.sh
 
 # Run the Sequential Thinking MCP server
-CMD ["/root/entrypoint.sh"]
+CMD ["/home/mcpuser/entrypoint.sh"]

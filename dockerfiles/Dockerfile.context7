@@ -1,21 +1,9 @@
-FROM node:20-slim
+FROM mcp-base:latest
 
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    ca-certificates \
-    bash \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /root
-
-# Clear npm cache to prevent conflicts
-RUN npm cache clean --force && \
-    rm -rf /root/.npm
-
-# Create entrypoint script with cache cleanup
-RUN printf '#!/bin/bash\nset -e\n# Clean up any existing npx cache\nrm -rf /root/.npm/_npx\nexec npx -y @upstash/context7-mcp\n' > /root/entrypoint.sh && \
-    chmod +x /root/entrypoint.sh
+# Clean up any existing npx cache and create entrypoint script
+RUN rm -rf /home/mcpuser/.npm/_npx && \
+    printf '#!/bin/bash\nset -e\n# Clean up any existing npx cache\nrm -rf /home/mcpuser/.npm/_npx\nexec npx -y @upstash/context7-mcp\n' > /home/mcpuser/entrypoint.sh && \
+    chmod +x /home/mcpuser/entrypoint.sh
 
 # Run the Context7 MCP server
-CMD ["/root/entrypoint.sh"]
+CMD ["/home/mcpuser/entrypoint.sh"]

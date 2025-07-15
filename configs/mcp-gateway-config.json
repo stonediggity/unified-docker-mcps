@@ -10,10 +10,6 @@
         "container": "mcp-puppeteer",
         "command": ["npx", "-y", "puppeteer-mcp-server"]
       },
-      "zen": {
-        "container": "mcp-zen",
-        "command": ["./run-server.sh"]
-      },
       "postgres": {
         "container": "mcp-postgres",
         "command": ["/app/entrypoint.sh"]

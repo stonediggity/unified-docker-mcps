@@ -1,0 +1,91 @@
+# Development Docker Compose Override
+# This file extends docker-compose.yml with development-specific settings
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+version: '3.8'
+
+services:
+  # Enable all profiles by default in development
+  mcp-gateway:
+    profiles: []  # Remove profile restriction
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./logs:/app/logs  # Mount logs for development
+
+  prometheus:
+    profiles: []  # Enable monitoring by default in dev
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus-dev-data:/prometheus
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+
+  grafana:
+    profiles: []  # Enable monitoring by default in dev
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - ./grafana-dev-data:/var/lib/grafana
+      - ./configs/grafana:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=true
+      - GF_LOG_LEVEL=${LOG_LEVEL:-debug}
+
+  node-exporter:
+    profiles: []  # Enable monitoring by default in dev
+
+  cadvisor:
+    profiles: []  # Enable monitoring by default in dev
+
+  # Development-specific service overrides
+  context7:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./logs/context7:/home/mcpuser/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '${CONTEXT7_CPU_LIMIT:-1.0}'
+          memory: ${CONTEXT7_MEMORY_LIMIT:-1G}
+
+  puppeteer:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - NODE_ENV=${NODE_ENV:-development}
+      - PUPPETEER_DEBUG=true
+    volumes:
+      - ./downloads:/home/mcpuser/downloads
+      - ./logs/puppeteer:/home/mcpuser/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '${PUPPETEER_CPU_LIMIT:-2.0}'
+          memory: ${PUPPETEER_MEMORY_LIMIT:-2G}
+
+  postgres:
+    environment:
+      - DATABASE_URL_STRING=${DATABASE_URL_STRING}
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./logs/postgres:/app/logs
+
+  sequentialthinking:
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./logs/sequentialthinking:/home/mcpuser/logs
+
+# Development-specific volumes
+volumes:
+  prometheus-dev-data:
+  grafana-dev-data:

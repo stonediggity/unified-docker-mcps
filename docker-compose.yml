@@ -1,16 +1,42 @@
 
 services:
+  # Base Node.js image for MCP servers
+  mcp-base:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.base-node
+    image: mcp-base:latest
+    container_name: mcp-base-build
+    profiles:
+      - build-base
+
   # Context7 MCP Server
   context7:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.context7
     container_name: mcp-context7
+    depends_on:
+      - mcp-base
     stdin_open: true
     tty: true
     networks:
       - mcp-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f context7-mcp || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
   # Puppeteer MCP Server
   puppeteer:
@@ -18,6 +44,8 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.puppeteer
     container_name: mcp-puppeteer
+    depends_on:
+      - mcp-base
     stdin_open: true
     tty: true
     networks:
@@ -31,6 +59,20 @@ services:
     # Mount for downloads if needed
     volumes:
       - ./downloads:/home/mcpuser/downloads
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f puppeteer-mcp-server || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.2'
+          memory: 256M
 
   # PostgreSQL MCP Server
   postgres:
@@ -45,6 +87,20 @@ services:
     restart: unless-stopped
     environment:
       - DATABASE_URL_STRING=${DATABASE_URL_STRING}
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f postgres-mcp || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
   # Sequential Thinking MCP Server
   sequentialthinking:
@@ -52,11 +108,27 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.sequentialthinking
     container_name: mcp-sequentialthinking
+    depends_on:
+      - mcp-base
     stdin_open: true
     tty: true
     networks:
       - mcp-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f server-sequential-thinking || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
   # MCP Gateway Server (Optional - for unified access)
   # Use: docker-compose --profile gateway up -d
@@ -76,7 +148,131 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
     profiles:
       - gateway
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8811/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+  # Monitoring Stack (Optional)
+  # Use: docker-compose --profile monitoring up -d
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mcp-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - mcp-network
+      - monitoring
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mcp-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: mcp-node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - monitoring
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: mcp-cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    networks:
+      - monitoring
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
 
 networks:
   mcp-network:
     driver: bridge
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:

@@ -4,10 +4,13 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 
 ## Features
 
-- 🐳 **Containerized MCP Servers**: Context7, Puppeteer, Zen, and PostgreSQL MCP servers
+- 🐳 **Containerized MCP Servers**: Context7, Puppeteer, PostgreSQL, and Sequential Thinking MCP servers
 - 🔒 **Security First**: Containers run as non-root users with security hardening
 - 🚀 **Easy Setup**: One-command deployment with Docker Compose
 - 🔧 **Flexible Configuration**: Support for both composed and standalone deployment
+- 📊 **Monitoring Ready**: Optional Prometheus and Grafana stack for observability
+- 🏗️ **Production Ready**: Multi-stage builds, health checks, and resource limits
+- 🌍 **Environment Support**: Separate configurations for development and production
 - 📝 **Complete Documentation**: Comprehensive setup and troubleshooting guides
 
 ## Project Structure
@@ -26,9 +29,16 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 │   ├── claude_desktop_config_standalone.json
 │   └── mcp-gateway-config.json
 ├── scripts/
-│   └── setup.sh               # Automated setup script
+│   ├── setup.sh               # Automated setup script
+│   ├── build-base.sh          # Base image build script
+│   ├── deploy-dev.sh          # Development deployment
+│   └── deploy-prod.sh         # Production deployment
 ├── downloads/                  # Puppeteer download directory
 ├── .env.example               # Environment variables template
+├── .env.dev                   # Development environment config
+├── .env.prod                  # Production environment config
+├── docker-compose.dev.yml     # Development overrides
+├── docker-compose.prod.yml    # Production overrides
 ├── example.mcp.json           # Example project MCP configuration
 └── README.md                  # This file
 ```
@@ -49,7 +59,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
    
    **Option A: Claude Desktop (Global)**
    - Copy the configuration from `configs/claude_desktop_config.json`
-   - Add it to your Claude Desktop MCP configuration file
+   - Add it to your Claude Desktop MCP configuration file 
    - Restart Claude Desktop
    
    **Option B: Claude Code (Per-Project)**
@@ -191,6 +201,8 @@ When using Claude Code, you can configure MCP servers on a per-project basis:
    ```
 
 ### Start Services
+
+**Quick Start (Basic)**
 ```bash
 # Start core MCP services (recommended)
 docker-compose up -d
@@ -200,6 +212,27 @@ docker-compose --profile gateway up -d
 
 # Start specific service
 docker-compose up -d context7
+```
+
+**Environment-Specific Deployment**
+```bash
+# Development environment (all features enabled, debug logging)
+./scripts/deploy-dev.sh
+
+# Production environment (optimized settings, resource limits)
+./scripts/deploy-prod.sh
+
+# Manual development deployment
+docker-compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Manual production deployment  
+docker-compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# Development with monitoring stack
+docker-compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Production with monitoring
+docker-compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml --profile monitoring up -d
 ```
 
 ### Monitor Services
