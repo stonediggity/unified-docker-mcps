@@ -11,16 +11,20 @@ The repo is the current repo that you are working in.
 Follow these steps to complete the task:
 
 1. Research the Repository
-Visit the provided repo_url and examine the repository's structure, existing issues, and documentation. Look for any CONTRIBUTING.md, ISSUE_TEMPLATE.md, or similar files that might contain guidelines for creating issues. Note the project's coding style, naming conventions, and any specific requirements for submitting issues.
+Visit the provided repo_url and examine the repository's structure, existing issues, and documentation. Note the project's coding style, naming conventions, and any specific requirements for submitting issues.
 
-2. Research Best Practices
+2. Check for Duplicate Issues
+Search existing open and closed issues to identify potential duplicates. Use relevant keywords from the feature description to search for similar requests or bug reports. If duplicates are found, note them and consider whether the new request adds unique value or if it should reference/extend existing issues instead.
+
+3. Research Best Practices
 Search for current best practices in writing GitHub issues, focusing on clarity, completeness, and actionability. Look for examples of well-written issues in popular open-source projects for inspiration.
+<<<<<<< HEAD
 <<<<<<< HEAD
 If you need to refer to uptodate documentation for a particular language/framework use your context7 mcp.
 =======
 >>>>>>> origin/main
-
-3. Access the zen mcp server tools if you need further input into your analysis. Check the tools before deciding what you want to do.
+=======
+>>>>>>> origin/main
 
 4. Present a Plan
 Describe your approach to drafting the GitHub issue and how you'll incorporate project-specific conventions. Present this plan in <plan> tags.

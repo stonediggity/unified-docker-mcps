@@ -1,0 +1,113 @@
+# Python-based MCP Browser Use Server
+FROM python:3.11-slim AS builder
+
+# Install system dependencies for browser automation
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    xdg-utils \
+    # Additional dependencies for Playwright
+    libdrm2 \
+    libxkbcommon0 \
+    libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv (Unified Virtual Environment)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
+
+# Production stage
+FROM python:3.11-slim AS production
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxrandr2 \
+    libxss1 \
+    xdg-utils \
+    libdrm2 \
+    libxkbcommon0 \
+    libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user
+RUN useradd -m -s /bin/bash mcpuser
+
+# Copy uv from builder
+COPY --from=builder /root/.local/bin/uv /usr/local/bin/uv
+
+# Install Playwright as root for system-wide access
+RUN uv pip install --system playwright
+
+# Install Playwright browsers and dependencies as root
+RUN playwright install chromium --with-deps
+
+# Make playwright browsers accessible to mcpuser
+RUN mkdir -p /home/mcpuser/.cache && \
+    cp -r /root/.cache/ms-playwright /home/mcpuser/.cache/ && \
+    chown -R mcpuser:mcpuser /home/mcpuser/.cache
+
+# Switch to non-root user
+USER mcpuser
+WORKDIR /home/mcpuser
+
+# Install Python dependencies using uv
+RUN uv tool install mcp-server-browser-use
+
+# Set PATH to include user's local bin
+ENV PATH="/home/mcpuser/.local/bin:$PATH"
+
+# Environment variables
+ENV MCP_BROWSER_HEADLESS=true
+ENV MCP_LLM_PROVIDER=${MCP_LLM_PROVIDER:-openai}
+ENV MCP_LLM_MODEL_NAME=${MCP_LLM_MODEL_NAME:-gpt-4o-mini}
+
+# Run the MCP browser-use server
+CMD ["mcp-server-browser-use"]

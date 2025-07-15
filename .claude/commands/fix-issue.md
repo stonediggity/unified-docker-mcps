@@ -12,29 +12,36 @@ Follow these steps to complete your task:
 
 2. Create a new branch:
 <<<<<<< HEAD
+<<<<<<< HEAD
    Generate a new branch name based on the issue number and a brief description of the issue (e.g., issue-123-fix-login-bug). Use the GitHub API to create this new branch in the repository. The new branch should be created from the currently checked-out branch in your local Git environment (i.e., the branch you're currently on).
 =======
    Generate a new branch name based on the issue number and a brief description of the issue. Use the GitHub API to create this new branch in the repository.
 >>>>>>> origin/main
+=======
+   Generate a new branch name based on the issue number and a brief description of the issue. Use the GitHub API to create this new branch in the repository.
+>>>>>>> origin/main
 
-3. Analyze the issue and create a to-do list:
-   Carefully read through the issue description and any comments. Create a detailed to-do list that outlines the steps needed to address the issue. This list should include:
+3. Analyze the issue and create a scratch-pad which you will use to track your work:
+   ALWAYS USE SUB AGENTS TO INVESTIGATE/READ FILES
+   Carefully read through the issue description and any comments. Create a detailed scratchpad that outlines the steps needed to address the issue. This list should include:
    - Any necessary research or investigation
    - Code changes or additions required
    - Tests that need to be written or updated
    - Documentation updates
    - Any potential impacts on other parts of the codebase
 <<<<<<< HEAD
+   - Committing changes, creating PRs and merging
+<<<<<<< HEAD
    - If you need to refer to uptodate documentation for a particular language/framework use your context7 mcp
 =======
 >>>>>>> origin/main
+=======
+>>>>>>> origin/main
 
-4. Access the zen mcp server tools if you need further input into your analysis.
-
-5. Present the plan to the human for approval:
+4. Present the plan to the human for approval:
    Display your analysis and to-do list to the human developer. Ask for their feedback and approval before proceeding further.
 
-6. Wait for human feedback:
+5. Wait for human feedback:
    Pause your execution and wait for the human to review your plan. Be prepared to make adjustments based on their input.
 
 Output your response in the following format:

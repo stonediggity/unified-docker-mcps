@@ -23,7 +23,7 @@ echo "🏗️  Building base image..."
 
 # Create log directories
 echo "📁 Creating log directories..."
-mkdir -p logs/context7 logs/puppeteer logs/postgres logs/sequentialthinking
+mkdir -p logs/context7 logs/browser-use logs/postgres logs/sequentialthinking
 
 # Deploy with development configuration
 echo "🐳 Starting services in development mode..."

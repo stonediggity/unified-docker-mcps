@@ -142,7 +142,7 @@ Environment-specific docker-compose files:
 ### Individual Dockerfiles
 - `dockerfiles/Dockerfile.base-node` - Shared base image for Node.js MCP servers
 - `dockerfiles/Dockerfile.context7` - Context7 MCP server (extends base-node)
-- `dockerfiles/Dockerfile.puppeteer` - Puppeteer automation (extends base-node)
+- `dockerfiles/Dockerfile.browser-use` - Browser automation with Browser-Use MCP (extends base-node)
 - `dockerfiles/Dockerfile.postgres` - PostgreSQL MCP server with database analysis
 - `dockerfiles/Dockerfile.sequentialthinking` - Sequential Thinking MCP server (extends base-node)
 - `dockerfiles/Dockerfile.gateway` - MCP Gateway (optional)
@@ -351,7 +351,7 @@ For production deployment:
 
 3. **Available MCP Commands**
    - **Context7**: Documentation search and analysis
-   - **Puppeteer**: Web scraping and browser automation
+   - **Browser-Use**: Web scraping and browser automation
    - **PostgreSQL**: Database queries, schema analysis, performance optimization
    - **Sequential Thinking**: Complex problem-solving with step-by-step reasoning
 
@@ -365,7 +365,7 @@ For production deployment:
 "Monitor database health"
 ```
 
-**Web Automation with Puppeteer:**
+**Web Automation with Browser-Use:**
 ```
 "Take a screenshot of example.com"
 "Fill out the login form on the page"

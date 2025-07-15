@@ -38,20 +38,25 @@ services:
           cpus: '0.1'
           memory: 128M
 
-  # Puppeteer MCP Server
-  puppeteer:
+  # Browser-Use MCP Server (replaces Puppeteer)
+  browser-use:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.puppeteer
-    container_name: mcp-puppeteer
-    depends_on:
-      - mcp-base
+      dockerfile: dockerfiles/Dockerfile.browser-use
+    image: mcp-browser-use:latest
+    container_name: mcp-browser-use
     stdin_open: true
     tty: true
     networks:
       - mcp-network
     restart: unless-stopped
-    # Puppeteer needs some additional capabilities
+    environment:
+      - MCP_LLM_PROVIDER=${MCP_LLM_PROVIDER:-openai}
+      - MCP_LLM_MODEL_NAME=${MCP_LLM_MODEL_NAME:-gpt-4o-mini}
+      - MCP_LLM_API_KEY=${OPENAI_API_KEY}
+      - MCP_BROWSER_HEADLESS=true
+      - MCP_BROWSER_DEFAULT_TIMEOUT=30000
+    # Browser automation needs some additional capabilities
     cap_add:
       - SYS_ADMIN
     security_opt:
@@ -60,7 +65,7 @@ services:
     volumes:
       - ./downloads:/home/mcpuser/downloads
     healthcheck:
-      test: ["CMD-SHELL", "pgrep -f puppeteer-mcp-server || exit 1"]
+      test: ["CMD-SHELL", "pgrep -f mcp-server-browser-use || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
