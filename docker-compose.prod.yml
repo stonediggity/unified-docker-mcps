@@ -32,16 +32,19 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  puppeteer:
+  browser-use:
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
-      - NODE_ENV=${NODE_ENV:-production}
-      - PUPPETEER_DEBUG=false
+      - MCP_BROWSER_HEADLESS=true
+      - MCP_BROWSER_DEBUG=false
+      - MCP_LLM_PROVIDER=${MCP_LLM_PROVIDER:-openai}
+      - MCP_LLM_MODEL_NAME=${MCP_LLM_MODEL_NAME:-gpt-4o-mini}
+      - MCP_LLM_API_KEY=${OPENAI_API_KEY}
     deploy:
       resources:
         limits:
-          cpus: '${PUPPETEER_CPU_LIMIT:-1.0}'
-          memory: ${PUPPETEER_MEMORY_LIMIT:-1G}
+          cpus: '${BROWSER_USE_CPU_LIMIT:-1.0}'
+          memory: ${BROWSER_USE_MEMORY_LIMIT:-1G}
         reservations:
           cpus: '0.2'
           memory: 256M

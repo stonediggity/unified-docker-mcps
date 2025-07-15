@@ -10,16 +10,18 @@
         "mcp-context7:latest"
       ]
     },
-    "puppeteer": {
+    "browser-use": {
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "--name", "mcp-puppeteer-temp",
+        "--name", "mcp-browser-use-temp",
         "--cap-add", "SYS_ADMIN",
         "--security-opt", "seccomp=unconfined",
-        "mcp-puppeteer:latest"
+        "-e", "MCP_LLM_API_KEY=${OPENAI_API_KEY}",
+        "-e", "MCP_BROWSER_HEADLESS=true",
+        "mcp-browser-use:latest"
       ]
     },
     "postgres": {

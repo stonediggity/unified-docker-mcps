@@ -60,7 +60,7 @@ sleep 15
 
 # Check service health
 echo "🔍 Checking service health..."
-for service in context7 puppeteer postgres sequentialthinking; do
+for service in context7 browser-use postgres sequentialthinking; do
     if docker-compose ps $service | grep -q "Up"; then
         echo "✅ $service: healthy"
     else

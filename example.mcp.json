@@ -11,15 +11,13 @@
         "@upstash/context7-mcp"
       ]
     },
-    "puppeteer": {
+    "browser-use": {
       "command": "docker",
       "args": [
         "exec",
         "-i",
-        "mcp-puppeteer",
-        "npx",
-        "-y",
-        "puppeteer-mcp-server"
+        "mcp-browser-use",
+        "mcp-server-browser-use"
       ]
     },
     "postgres": {

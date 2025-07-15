@@ -4,7 +4,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 
 ## Features
 
-- 🐳 **Containerized MCP Servers**: Context7, Puppeteer, PostgreSQL, and Sequential Thinking MCP servers
+- 🐳 **Containerized MCP Servers**: Context7, Browser-Use, PostgreSQL, and Sequential Thinking MCP servers
 - 🔒 **Security First**: Containers run as non-root users with security hardening
 - 🚀 **Easy Setup**: One-command deployment with Docker Compose
 - 🔧 **Flexible Configuration**: Support for both composed and standalone deployment
@@ -19,7 +19,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 ├── docker-compose.yml           # Main orchestration file
 ├── dockerfiles/                 # Individual container definitions
 │   ├── Dockerfile.context7
-│   ├── Dockerfile.puppeteer
+│   ├── Dockerfile.browser-use
 │   ├── Dockerfile.postgres
 │   ├── Dockerfile.base-node
 │   ├── Dockerfile.sequentialthinking
@@ -33,7 +33,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 │   ├── build-base.sh          # Base image build script
 │   ├── deploy-dev.sh          # Development deployment
 │   └── deploy-prod.sh         # Production deployment
-├── downloads/                  # Puppeteer download directory
+├── downloads/                  # Browser automation download directory
 ├── .env.example               # Environment variables template
 ├── .env.dev                   # Development environment config
 ├── .env.prod                  # Production environment config
@@ -72,8 +72,13 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 ### Context7 MCP Server
 Provides AI-powered context analysis and understanding for documentation and code.
 
-### Puppeteer MCP Server
-Web scraping and browser automation capabilities for data extraction and testing.
+### Browser-Use MCP Server
+Browser automation and web interaction capabilities powered by Puppeteer, including:
+- Screenshot capture of web pages
+- Form filling and interaction
+- Page navigation and JavaScript execution
+- Web scraping and data extraction
+- Automated testing scenarios
 
 
 ### PostgreSQL MCP Server
@@ -125,15 +130,15 @@ Comprehensive PostgreSQL database management and analysis platform offering:
            "@upstash/context7-mcp"
          ]
        },
-       "puppeteer": {
+       "browser-use": {
          "command": "docker",
          "args": [
            "exec",
            "-i",
-           "mcp-puppeteer",
+           "mcp-browser-use",
            "npx",
            "-y",
-           "puppeteer-mcp-server"
+           "@agent-infra/mcp-server-browser@latest"
          ]
        },
        "postgres": {
@@ -301,9 +306,9 @@ Required environment variables in `.env`:
 
 ### Service-Specific Issues
 
-**Puppeteer**: If Chrome fails to start, check that the container has sufficient capabilities:
+**Browser-Use**: If Chrome fails to start, check that the container has sufficient capabilities:
 ```bash
-docker run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined mcp-puppeteer:latest
+docker run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined mcp-browser-use:latest
 ```
 
 

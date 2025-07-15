@@ -12,7 +12,7 @@ echo "✅ Base image built successfully"
 echo "🏗️  Building dependent services..."
 
 # Build all services that depend on the base image
-docker-compose build context7 puppeteer sequentialthinking
+docker-compose build context7 browser-use sequentialthinking
 
 echo "✅ All services built successfully"
 echo ""
