@@ -33,7 +33,7 @@ services:
       - ./grafana-dev-data:/var/lib/grafana
       - ./configs/grafana:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=true
       - GF_LOG_LEVEL=${LOG_LEVEL:-debug}
 

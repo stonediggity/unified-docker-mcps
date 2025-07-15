@@ -31,7 +31,7 @@
         "postgres-mcp",
         "--access-mode=unrestricted",
         "--transport=stdio",
-        "postgresql://username:password@host:5432/database"
+        "postgresql://[USERNAME]:[PASSWORD]@[HOST]:[PORT]/[DATABASE]"
       ]
     },
     "sequential-thinking": {
