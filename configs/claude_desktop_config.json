@@ -22,15 +22,6 @@
         "puppeteer-mcp-server"
       ]
     },
-    "zen": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "mcp-zen",
-        "./run-server.sh"
-      ]
-    },
     "postgres": {
       "command": "docker",
       "args": [

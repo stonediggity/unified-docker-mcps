@@ -20,9 +20,9 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 ├── dockerfiles/                 # Individual container definitions
 │   ├── Dockerfile.context7
 │   ├── Dockerfile.puppeteer
-│   ├── Dockerfile.zen
 │   ├── Dockerfile.postgres
 │   ├── Dockerfile.base-node
+│   ├── Dockerfile.sequentialthinking
 │   └── Dockerfile.gateway
 ├── configs/                     # Claude Desktop configurations
 │   ├── claude_desktop_config.json
@@ -75,8 +75,6 @@ Provides AI-powered context analysis and understanding for documentation and cod
 ### Puppeteer MCP Server
 Web scraping and browser automation capabilities for data extraction and testing.
 
-### Zen MCP Server
-Advanced AI reasoning and analysis tools with support for multiple AI models.
 
 ### PostgreSQL MCP Server
 Comprehensive PostgreSQL database management and analysis platform offering:
@@ -277,7 +275,6 @@ Alternative configuration in `configs/claude_desktop_config_standalone.json` run
 
 Required environment variables in `.env`:
 
-- `OPENROUTER_API_KEY`: API key for Zen MCP server ([Get from OpenRouter](https://openrouter.ai/))
 - `DATABASE_URL_STRING`: PostgreSQL connection string for PostgreSQL MCP server (format: postgresql://username:password@host:port/database)
 
 ## Troubleshooting
@@ -309,7 +306,6 @@ Required environment variables in `.env`:
 docker run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined mcp-puppeteer:latest
 ```
 
-**Zen**: Ensure OPENROUTER_API_KEY is properly set in your .env file.
 
 **PostgreSQL**: Verify DATABASE_URL_STRING is correctly configured with a valid PostgreSQL connection string. Test database connectivity with:
 ```bash

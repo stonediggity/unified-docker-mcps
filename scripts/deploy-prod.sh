@@ -20,10 +20,6 @@ fi
 echo "🔍 Validating environment configuration..."
 source .env.prod
 
-if [ -z "$OPENROUTER_API_KEY" ]; then
-    echo "❌ Error: OPENROUTER_API_KEY not set in .env.prod"
-    exit 1
-fi
 
 if [ -z "$DATABASE_URL_STRING" ]; then
     echo "❌ Error: DATABASE_URL_STRING not set in .env.prod"

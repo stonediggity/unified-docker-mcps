@@ -87,13 +87,13 @@ docker-compose restart postgres
 docker-compose logs -f
 
 # View logs for specific service
-docker-compose logs -f zen
+docker-compose logs -f context7
 
 # Check container status
 docker-compose ps
 
 # Enter container for debugging
-docker exec -it mcp-zen /bin/bash
+docker exec -it mcp-context7 /bin/bash
 
 # View resource usage
 docker stats
@@ -269,7 +269,6 @@ chmod +x scripts/setup.sh
 ## Environment Variables
 
 Required in `.env` file:
-- `OPENROUTER_API_KEY` - For Zen MCP server
 - `DATABASE_URL_STRING` - For PostgreSQL MCP server (format: postgresql://username:password@host:port/database)
 
 ## Testing

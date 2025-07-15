@@ -22,17 +22,6 @@
         "mcp-puppeteer:latest"
       ]
     },
-    "zen": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "--name", "mcp-zen-temp",
-        "-e", "OPENROUTER_API_KEY=${OPENROUTER_API_KEY}",
-        "mcp-zen:latest"
-      ]
-    },
     "postgres": {
       "command": "docker",
       "args": [
