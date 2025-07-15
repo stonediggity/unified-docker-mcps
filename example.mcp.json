@@ -1,0 +1,49 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-context7",
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ]
+    },
+    "puppeteer": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-puppeteer",
+        "npx",
+        "-y",
+        "puppeteer-mcp-server"
+      ]
+    },
+    "postgres": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-postgres",
+        "postgres-mcp",
+        "--access-mode=unrestricted",
+        "--transport=stdio",
+        "postgresql://username:password@host:5432/database"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "mcp-sequentialthinking",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    }
+  }
+}

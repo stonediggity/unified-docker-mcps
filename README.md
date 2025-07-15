@@ -29,6 +29,7 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
 │   └── setup.sh               # Automated setup script
 ├── downloads/                  # Puppeteer download directory
 ├── .env.example               # Environment variables template
+├── example.mcp.json           # Example project MCP configuration
 └── README.md                  # This file
 ```
 
@@ -44,10 +45,17 @@ A complete Docker setup for running multiple MCP (Model Context Protocol) server
    ./scripts/setup.sh
    ```
 
-2. **Configure Claude Desktop**
+2. **Configure MCP Access**
+   
+   **Option A: Claude Desktop (Global)**
    - Copy the configuration from `configs/claude_desktop_config.json`
    - Add it to your Claude Desktop MCP configuration file
    - Restart Claude Desktop
+   
+   **Option B: Claude Code (Per-Project)**
+   - Create a `.mcp.json` file in your project root
+   - Copy the example configuration from the Usage Instructions section below
+   - Customize for your specific needs
 
 ## Individual Services
 
@@ -71,6 +79,116 @@ Comprehensive PostgreSQL database management and analysis platform offering:
 - **Advanced SQL Execution**: Run complex queries with detailed result analysis
 
 ## Usage Instructions
+
+### Setting Up MCP Servers
+
+1. **Start the Docker containers**
+   ```bash
+   # Start core MCP services (recommended)
+   docker-compose up -d
+
+   # Start all services including gateway
+   docker-compose --profile gateway up -d
+
+   # Start specific service
+   docker-compose up -d context7
+   ```
+
+2. **Configure Claude Desktop (Global Configuration)**
+   - Copy the configuration from `configs/claude_desktop_config.json`
+   - Add it to your Claude Desktop MCP configuration file
+   - Restart Claude Desktop
+
+3. **Configure Claude Code for Your Project (Recommended)**
+   
+   Create a `.mcp.json` file in your project's root directory to enable MCP servers for that specific project. You can copy from `example.mcp.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "context7": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-context7",
+           "npx",
+           "-y",
+           "@upstash/context7-mcp"
+         ]
+       },
+       "puppeteer": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-puppeteer",
+           "npx",
+           "-y",
+           "puppeteer-mcp-server"
+         ]
+       },
+       "postgres": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-postgres",
+           "postgres-mcp",
+           "--access-mode=unrestricted",
+           "--transport=stdio",
+           "postgresql://your-username:your-password@your-host:5432/your-database"
+         ]
+       },
+       "sequential-thinking": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-sequentialthinking",
+           "npx",
+           "-y",
+           "@modelcontextprotocol/server-sequential-thinking"
+         ]
+       }
+     }
+   }
+   ```
+
+   **Note**: Replace the PostgreSQL connection string with your actual database credentials.
+
+### Project-Specific MCP Configuration
+
+When using Claude Code, you can configure MCP servers on a per-project basis:
+
+1. **Create `.mcp.json` in your project root**
+   - This file configures which MCP servers Claude Code can access for this specific project
+   - You can selectively enable only the servers needed for your project
+
+2. **Customize for your needs**
+   - Remove servers you don't need
+   - Add custom configuration for specific servers
+   - Update database connection strings or API endpoints
+
+3. **Example minimal configuration**
+   ```json
+   {
+     "mcpServers": {
+       "postgres": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-postgres",
+           "postgres-mcp",
+           "--access-mode=unrestricted",
+           "--transport=stdio",
+           "postgresql://localhost:5432/myapp"
+         ]
+       }
+     }
+   }
+   ```
 
 ### Start Services
 ```bash

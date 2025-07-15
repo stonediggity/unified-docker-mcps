@@ -7,6 +7,7 @@ This document provides development setup instructions and common commands for wo
 - Docker and Docker Compose installed
 - Basic familiarity with MCP (Model Context Protocol)
 - API keys for required services (OpenRouter, PostgreSQL database)
+- Claude Code installed for project-specific MCP usage
 
 ## Development Setup
 
@@ -100,11 +101,16 @@ docker-compose down -v --rmi all
 - `configs/claude_desktop_config.json` - For Docker Compose setup
 - `configs/claude_desktop_config_standalone.json` - For standalone containers
 
+### Claude Code Integration (Project-Specific)
+- Create `.mcp.json` in your project root directory
+- Configure MCP servers specific to that project
+- Example configuration provided in README.md
+
 ### Individual Dockerfiles
 - `dockerfiles/Dockerfile.context7` - Context7 MCP server
 - `dockerfiles/Dockerfile.puppeteer` - Puppeteer automation
-- `dockerfiles/Dockerfile.zen` - Zen AI reasoning tools
 - `dockerfiles/Dockerfile.postgres` - PostgreSQL MCP server with database analysis
+- `dockerfiles/Dockerfile.sequentialthinking` - Sequential Thinking MCP server
 - `dockerfiles/Dockerfile.gateway` - MCP Gateway (optional)
 
 ## Adding New Services
@@ -261,9 +267,70 @@ For production deployment:
 3. Set up monitoring and alerting
 4. Consider using Docker Swarm or Kubernetes for scaling
 
+## MCP Usage in Projects
+
+### Using MCP Servers with Claude Code
+
+1. **Ensure Docker containers are running**
+   ```bash
+   docker-compose ps  # Check status
+   docker-compose up -d  # Start if needed
+   ```
+
+2. **Create `.mcp.json` in your project root**
+   ```json
+   {
+     "mcpServers": {
+       "postgres": {
+         "command": "docker",
+         "args": [
+           "exec",
+           "-i",
+           "mcp-postgres",
+           "postgres-mcp",
+           "--access-mode=unrestricted",
+           "--transport=stdio",
+           "postgresql://localhost:5432/myproject"
+         ]
+       }
+     }
+   }
+   ```
+
+3. **Available MCP Commands**
+   - **Context7**: Documentation search and analysis
+   - **Puppeteer**: Web scraping and browser automation
+   - **PostgreSQL**: Database queries, schema analysis, performance optimization
+   - **Sequential Thinking**: Complex problem-solving with step-by-step reasoning
+
+### Example Use Cases
+
+**Database Analysis with PostgreSQL MCP:**
+```
+"Show me all tables in the public schema"
+"Analyze the performance of my queries"
+"Check for missing indexes"
+"Monitor database health"
+```
+
+**Web Automation with Puppeteer:**
+```
+"Take a screenshot of example.com"
+"Fill out the login form on the page"
+"Extract all links from the current page"
+```
+
+**Documentation with Context7:**
+```
+"Search Next.js docs for routing"
+"Find React hooks documentation"
+"Look up PostgreSQL JSON functions"
+```
+
 ## Getting Help
 
 - Check container logs first: `docker-compose logs [service-name]`
 - Verify environment variables are set correctly
 - Ensure Docker and docker-compose are up to date
+- For MCP-specific issues, check `.mcp.json` configuration
 - Open issues in this repository for bugs or feature requests
